@@ -13,14 +13,18 @@
             ConsumerConfig/KEY_DESERIALIZER_CLASS_CONFIG   "org.apache.kafka.common.serialization.StringDeserializer"
             ConsumerConfig/VALUE_DESERIALIZER_CLASS_CONFIG "org.apache.kafka.common.serialization.StringDeserializer"})
 
+(defn consumer-sub
+  [consumer topic]
+  (println "Subscribring consumer")
+  (.subscrib consumer [topic]))
+
 (defn -main [topic]
   (let [consumer (KafkaConsumer. props)]
-    (println "Testing")
-    (.subscribe consumer [topic])
+    (consumer-sub consumer topic)
     (while true
-      (let [records (.poll consumer (Duration/ofMillis 10000))]
+      (let [records (.poll consumer (Duration/ofMillis 200))]
         (doseq [record records]
-          (log/info "Sending on value" (str "Processed Value" (.value record))))
+          (log/info "Sending on value" (.value record)))
         (.commitAsync consumer)))
     ;; (loop [tc 0
     ;;        records []]
